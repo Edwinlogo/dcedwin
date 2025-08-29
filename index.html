@@ -124,20 +124,23 @@
         .dropdown-item:nth-child(1) {
             animation-delay: 0.1s;
         }
+        /* Posición Original (0, -110px) */
         .logo-container.open .dropdown-item:nth-child(1) {
             transform: translate(-50%, -50%) translate(0, -110px) scale(1);
         }
-
+        
         .dropdown-item:nth-child(2) {
             animation-delay: 0.15s;
         }
+        /* Posición Original (95px, -55px) */
         .logo-container.open .dropdown-item:nth-child(2) {
-            transform: translate(-50%, -50%) translate(95px, -55px) scale(1);
+            transform: translate(-50%, -50%) translate(0px, 110px) scale(1);
         }
 
         .dropdown-item:nth-child(3) {
             animation-delay: 0.2s;
         }
+        /* Posición Original (95px, 55px) */
         .logo-container.open .dropdown-item:nth-child(3) {
             transform: translate(-50%, -50%) translate(95px, 55px) scale(1);
         }
@@ -145,6 +148,7 @@
         .dropdown-item:nth-child(4) {
             animation-delay: 0.25s;
         }
+        /* Posición Original (0, 110px) */
         .logo-container.open .dropdown-item:nth-child(4) {
             transform: translate(-50%, -50%) translate(0, 110px) scale(1);
         }
@@ -152,6 +156,7 @@
         .dropdown-item:nth-child(5) {
             animation-delay: 0.3s;
         }
+        /* Posición Original (-95px, 55px) */
         .logo-container.open .dropdown-item:nth-child(5) {
             transform: translate(-50%, -50%) translate(-95px, 55px) scale(1);
         }
@@ -159,6 +164,7 @@
         .dropdown-item:nth-child(6) {
             animation-delay: 0.35s;
         }
+        /* Posición Original (-95px, -55px) */
         .logo-container.open .dropdown-item:nth-child(6) {
             transform: translate(-50%, -50%) translate(-95px, -55px) scale(1);
         }
@@ -329,7 +335,30 @@
                 opacity: 0;
             }
         }
+        
+        /* Animación para partículas descendentes */
+        @keyframes float-down {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
 
+        /* Asignar animación descendente SOLO al área de CONSTRUCTOR */
+        #constructor-particles .particle {
+            animation: float-down 6s infinite linear;
+        }
+       
         /* Efectos de clic */
         .option.clicked {
             transform: scale(1.05);
@@ -401,9 +430,9 @@
                 transform: translate(-50%, -50%) translate(-78px, -45px) scale(1);
             }
             
-            /* Hover ajustado para móvil */
+            /*(Petalos) Hover ajustado para móvil   */
             .logo-container.open .dropdown-item:nth-child(1):hover { --x: 0; --y: -90px; }
-            .logo-container.open .dropdown-item:nth-child(2):hover { --x: 78px; --y: -45px; }
+            .logo-container.open .dropdown-item:nth-child(2):hover { --x: 0; --y: 90px; }      /*    Original:{ --x: 78px; --y: -45px; }   */
             .logo-container.open .dropdown-item:nth-child(3):hover { --x: 78px; --y: 45px; }
             .logo-container.open .dropdown-item:nth-child(4):hover { --x: 0; --y: 90px; }
             .logo-container.open .dropdown-item:nth-child(5):hover { --x: -78px; --y: 45px; }
@@ -505,6 +534,14 @@
                 transform: translateY(-5px);
             }
         }
+
+         /* Ajuste de ícono de opciones en el menú */
+        .img-options {
+            width: 40px;   
+            height: 40px;
+            object-fit: contain;
+        }
+        
     </style>
 </head>
 <body>
@@ -515,10 +552,10 @@
                 
                                 
                 <a href="https://wa.me/3144290830" class="dropdown-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png" alt="Whatsapp" class="ai-style-change-2">    
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png" alt="Whatsapp" class="img-options">    
                 </a>
                                 
-                <a href="https://camacol.co/sites/default/files/construccion-monolitica-sitio-construccion-verano.jpg" class="dropdown-item">Conoce nuestro Equipo</a>
+                <a href="https://camacol.co/sites/default/files/construccion-monolitica-sitio-construccion-verano.jpg" class="dropdown-item">📷</a>
 
                 
             </div>
@@ -665,5 +702,6 @@
 </body>
 
 </html>
+
 
 
