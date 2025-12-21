@@ -6,148 +6,134 @@ const CSV_QUEUE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQLj-Bgbh
 
 const CSV_AWARDED_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQLj-BgbhSnjNKbjIpNcuva7T0-8kuFVNpT-SYld80Q8DogUK05dL5ljOOC7FYyUSahsk8AcV3BTYh5/pub?gid=257425403&single=true&output=csv";
 
-// Empresa
 const ORIGIN_ADDRESS = "Palm Coast, FL";
-
-// ==========================
 
 let queueTable, awardedTable;
 let calendar;
 let calendarEvents = [];
 const gcSet = new Set();
 
+/* ==========================
+   INIT
+========================== */
 document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
   initCalendar();
   loadAllData();
-  setInterval(loadAllData, 300000); // 5 min
 });
 
 /* ==========================
-   DATA LOADING
+   CSV LOAD
 ========================== */
-async function loadAllData() {
+function parseCSV(url, callback) {
+  Papa.parse(url, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: results => callback(results.data)
+  });
+}
+
+function loadAllData() {
   gcSet.clear();
   calendarEvents = [];
 
-  await loadQueue();
-  await loadAwarded();
-
-  populateGCFilter();
-  updateCalendar();
-
-  document.getElementById("lastUpdate").textContent =
-    new Date().toLocaleString();
-}
-
-async function fetchCSV(url) {
-  const res = await fetch(url);
-  const text = await res.text();
-  return text
-    .split("\n")
-    .slice(1)
-    .map(r => r.split(","));
+  parseCSV(CSV_QUEUE_URL, loadQueue);
+  parseCSV(CSV_AWARDED_URL, loadAwarded);
 }
 
 /* ==========================
    EN COLA
 ========================== */
-async function loadQueue() {
-  const data = await fetchCSV(CSV_QUEUE_URL);
+function loadQueue(data) {
   const tbody = document.querySelector("#queueTable tbody");
   tbody.innerHTML = "";
 
   data.forEach(row => {
-    if (!row[0]) return;
+    if (!row["Project Name"]) return;
 
-    gcSet.add(row[1]);
+    gcSet.add(row["General Contractor"]);
 
     calendarEvents.push({
-      title: row[0],
-      start: row[4],
-      color: "#ffc107",
-      extendedProps: {
-        tooltip: `${row[0]} | ${row[1]} | ${row[2]}`
-      }
+      title: row["Project Name"],
+      start: row["Bid due date"],
+      color: "#ffc107"
     });
 
     tbody.innerHTML += `
       <tr>
-        <td>${row[0]}</td>
-        <td>${row[1]}</td>
-        <td>${mapLink(row[2])}</td>
-        <td>${row[3]}</td>
-        <td>${dueBadge(row[4])}</td>
-        <td>${row[8]}</td>
+        <td>${row["Project Name"]}</td>
+        <td>${row["General Contractor"]}</td>
+        <td>${mapLink(row["Location"])}</td>
+        <td>${row["Receipt"]}</td>
+        <td>${row["Bid due date"]}</td>
+        <td>${row["Note"] || ""}</td>
         <td>${links({
-          plans: row[10],
-          proposal: row[13]
+          plans: row["Plans"],
+          proposal: row["Proposal"]
         })}</td>
       </tr>`;
   });
 
   if (queueTable) queueTable.destroy();
   queueTable = new DataTable("#queueTable");
+
+  populateGCFilter();
+  updateCalendar();
 }
 
 /* ==========================
    APOSTADOS
 ========================== */
-async function loadAwarded() {
-  const data = await fetchCSV(CSV_AWARDED_URL);
+function loadAwarded(data) {
   const tbody = document.querySelector("#awardedTable tbody");
   tbody.innerHTML = "";
 
   data.forEach(row => {
-    if (!row[0]) return;
+    if (!row["Project Name"]) return;
 
-    gcSet.add(row[1]);
+    gcSet.add(row["General Contractor"]);
 
     calendarEvents.push({
-      title: row[0],
-      start: row[4],
-      color: "#198754",
-      extendedProps: {
-        tooltip: `${row[0]} | ${row[1]} | ${row[2]}`
-      }
+      title: row["Project Name"],
+      start: row["Bid due date"],
+      color: "#198754"
     });
 
     tbody.innerHTML += `
       <tr>
-        <td>${row[0]}</td>
-        <td>${row[1]}</td>
-        <td>${mapLink(row[2])}</td>
-        <td>${row[3]}</td>
-        <td>${dueBadge(row[4])}</td>
-        <td>${row[5]}</td>
-        <td>$${Number(row[6]).toLocaleString()}</td>
-        <td>${row[8]}</td>
+        <td>${row["Project Name"]}</td>
+        <td>${row["General Contractor"]}</td>
+        <td>${mapLink(row["Location"])}</td>
+        <td>${row["Receipt"]}</td>
+        <td>${row["Bid due date"]}</td>
+        <td>${row["Submission date"] || ""}</td>
+        <td>$${Number(row[" Total Cost (USD) "] || 0).toLocaleString()}</td>
+        <td>${row["Note"] || ""}</td>
         <td>${links({
-          draft: row[9],
-          plans: row[10],
-          takeoffs: row[11],
-          pricing: row[12],
-          proposal: row[13]
+          draft: row["Draft Plans"],
+          plans: row["Plans"],
+          takeoffs: row["Takeoffs"],
+          pricing: row["Pricings"],
+          proposal: row["Proposal"]
         })}</td>
       </tr>`;
   });
 
   if (awardedTable) awardedTable.destroy();
   awardedTable = new DataTable("#awardedTable");
+
+  populateGCFilter();
+  updateCalendar();
 }
 
 /* ==========================
-   CALENDARIO
+   CALENDAR
 ========================== */
 function initCalendar() {
   calendar = new FullCalendar.Calendar(
     document.getElementById("calendar"),
-    {
-      initialView: "dayGridMonth",
-      height: "auto",
-      eventDidMount(info) {
-        info.el.title = info.event.extendedProps.tooltip;
-      }
-    }
+    { initialView: "dayGridMonth", height: "auto" }
   );
   calendar.render();
 }
@@ -158,22 +144,33 @@ function updateCalendar() {
 }
 
 /* ==========================
-   FILTRO GC
+   GC FILTER
 ========================== */
 function populateGCFilter() {
   const select = document.getElementById("gcFilter");
   select.innerHTML = `<option value="">Todos</option>`;
-
   [...gcSet].sort().forEach(gc => {
     select.innerHTML += `<option value="${gc}">${gc}</option>`;
   });
 }
 
-document.getElementById("gcFilter").addEventListener("change", function () {
-  const val = this.value;
-  queueTable.column(1).search(val).draw();
-  awardedTable.column(1).search(val).draw();
+document.getElementById("gcFilter").addEventListener("change", e => {
+  queueTable.column(1).search(e.target.value).draw();
+  awardedTable.column(1).search(e.target.value).draw();
 });
+
+/* ==========================
+   THEME
+========================== */
+function initTheme() {
+  const btn = document.getElementById("themeToggle");
+  if (localStorage.theme === "dark") document.body.classList.add("dark");
+
+  btn.onclick = () => {
+    document.body.classList.toggle("dark");
+    localStorage.theme = document.body.classList.contains("dark") ? "dark" : "light";
+  };
+}
 
 /* ==========================
    HELPERS
@@ -188,17 +185,5 @@ function links(obj) {
 function mapLink(location) {
   if (!location) return "";
   return `<a href="https://www.google.com/maps/dir/${ORIGIN_ADDRESS}/${location}"
-            target="_blank">📍 ${location}</a>`;
-}
-
-function dueBadge(dateStr) {
-  if (!dateStr) return "";
-  const days =
-    (new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24);
-
-  let cls = "badge-ok";
-  if (days < 3) cls = "badge-soon";
-  else if (days < 7) cls = "badge-mid";
-
-  return `<span class="badge ${cls}">${dateStr}</span>`;
+    target="_blank">📍 ${location}</a>`;
 }

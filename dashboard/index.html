@@ -14,15 +14,23 @@
   <!-- FullCalendar -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 
+  <!-- PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="container-fluid mt-4">
 
-  <h2 class="mb-3">📊 Construction Bids Dashboard</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>📊 Construction Bids Dashboard</h2>
+    <button id="themeToggle" class="btn btn-outline-secondary">
+      🌙 Dark
+    </button>
+  </div>
 
-  <!-- FILTROS -->
+  <!-- FILTRO GC -->
   <div class="row mb-3">
     <div class="col-md-4">
       <label class="form-label">General Contractor</label>
@@ -35,26 +43,18 @@
   <!-- TABS -->
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#queueTab">
-        📌 En Cola
-      </button>
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#queueTab">📌 En Cola</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#awardedTab">
-        ✅ Apostados
-      </button>
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#awardedTab">✅ Apostados</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#calendarTab">
-        📅 Calendario
-      </button>
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#calendarTab">📅 Calendario</button>
     </li>
   </ul>
 
-  <!-- CONTENIDO -->
   <div class="tab-content mt-3">
 
-    <!-- EN COLA -->
     <div class="tab-pane fade show active" id="queueTab">
       <table id="queueTable" class="table table-striped table-bordered w-100">
         <thead>
@@ -72,7 +72,6 @@
       </table>
     </div>
 
-    <!-- APOSTADOS -->
     <div class="tab-pane fade" id="awardedTab">
       <table id="awardedTable" class="table table-striped table-bordered w-100">
         <thead>
@@ -83,7 +82,7 @@
             <th>Receipt</th>
             <th>Bid Due</th>
             <th>Submission</th>
-            <th>Total Cost (USD)</th>
+            <th>Total Cost</th>
             <th>Note</th>
             <th>Links</th>
           </tr>
@@ -92,21 +91,14 @@
       </table>
     </div>
 
-    <!-- CALENDARIO -->
     <div class="tab-pane fade" id="calendarTab">
       <div id="calendar"></div>
     </div>
 
   </div>
 
-  <div class="text-muted mt-3">
-    Última actualización: <span id="lastUpdate">--</span>
-    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="loadAllData()">🔄 Actualizar</button>
-  </div>
-
 </div>
 
-<!-- JS -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>

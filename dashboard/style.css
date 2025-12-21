@@ -1,26 +1,26 @@
-body {
-  background-color: #f8f9fa;
+:root {
+  --bg: #f8f9fa;
+  --text: #000;
+  --card: #fff;
 }
 
-table td {
-  vertical-align: middle;
+body.dark {
+  --bg: #121212;
+  --text: #eaeaea;
+  --card: #1e1e1e;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+table, .dataTables_wrapper {
+  background-color: var(--card);
 }
 
 #calendar {
-  background: white;
+  background: var(--card);
   padding: 15px;
   border-radius: 8px;
-}
-
-.badge-soon {
-  background-color: #dc3545;
-}
-
-.badge-mid {
-  background-color: #ffc107;
-  color: #000;
-}
-
-.badge-ok {
-  background-color: #198754;
 }
