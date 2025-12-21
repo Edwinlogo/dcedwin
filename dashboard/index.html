@@ -15,9 +15,10 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0a4d4e 0%, #1a5f7a 50%, #0d3b52 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #e0e0e0;
         }
 
         .container {
@@ -26,16 +27,17 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(30, 30, 40, 0.95);
             backdrop-filter: blur(10px);
             padding: 25px 30px;
             border-radius: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .header h1 {
-            color: #333;
+            color: #fff;
             font-size: 2em;
             margin-bottom: 10px;
         }
@@ -48,13 +50,13 @@
         }
 
         .stat-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
             color: white;
             padding: 10px 20px;
             border-radius: 30px;
             font-weight: 600;
             font-size: 0.9em;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
 
         .tabs {
@@ -65,27 +67,29 @@
         }
 
         .tab {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
+            background: rgba(30, 30, 40, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px 30px;
             border-radius: 15px;
             cursor: pointer;
             font-size: 1em;
             font-weight: 600;
-            color: #555;
+            color: #b0b0b0;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .tab:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            color: #fff;
         }
 
         .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
             color: white;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
 
         .tab-content {
@@ -110,13 +114,13 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(30, 30, 40, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
-            border-left: 5px solid #667eea;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -128,12 +132,13 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #10b981 0%, #0891b2 100%);
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.5);
         }
 
         .card-header {
@@ -146,13 +151,13 @@
         .card-title {
             font-size: 1.2em;
             font-weight: 700;
-            color: #333;
+            color: #fff;
             flex: 1;
             line-height: 1.4;
         }
 
         .card-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
             color: white;
             padding: 5px 12px;
             border-radius: 20px;
@@ -164,20 +169,70 @@
 
         .card-info {
             margin: 10px 0;
-            color: #666;
+            color: #b0b0b0;
             line-height: 1.6;
         }
 
         .card-info strong {
-            color: #333;
+            color: #e0e0e0;
             display: inline-block;
             min-width: 120px;
+        }
+
+        .document-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .doc-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            position: relative;
+        }
+
+        .doc-icon:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .doc-icon::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 30, 0.95);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.7em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .doc-icon:hover::after {
+            opacity: 1;
         }
 
         .card-footer {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -193,16 +248,17 @@
         }
 
         .chart-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(30, 30, 40, 0.95);
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .chart-title {
             font-size: 1.2em;
             font-weight: 700;
-            color: #333;
+            color: #fff;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -218,14 +274,15 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
             color: white;
             padding: 20px 25px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             animation: slideIn 0.5s ease, slideOut 0.5s ease 4.5s;
             max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         @keyframes slideIn {
@@ -262,7 +319,7 @@
         }
 
         .refresh-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
             color: white;
             border: none;
             padding: 12px 25px;
@@ -270,14 +327,14 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.95em;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
             transition: all 0.3s ease;
             margin-left: 15px;
         }
 
         .refresh-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
         }
 
         @media (max-width: 768px) {
@@ -338,11 +395,11 @@
         <div id="analytics" class="tab-content">
             <div class="charts-section">
                 <div class="chart-container">
-                    <div class="chart-title">Distribución por Estado</div>
-                    <canvas id="statusChart"></canvas>
+                    <div class="chart-title">Proyectos por General Contractor</div>
+                    <canvas id="contractorChart"></canvas>
                 </div>
                 <div class="chart-container">
-                    <div class="chart-title">Proyectos por Mes</div>
+                    <div class="chart-title">Proyectos por Mes (Submission Date)</div>
                     <canvas id="timelineChart"></canvas>
                 </div>
             </div>
@@ -358,6 +415,15 @@
         const CSV_PENDING = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLj-BgbhSnjNKbjIpNcuva7T0-8kuFVNpT-SYld80Q8DogUK05dL5ljOOC7FYyUSahsk8AcV3BTYh5/pub?gid=2110876662&single=true&output=csv';
         const CSV_ESTIMATED = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLj-BgbhSnjNKbjIpNcuva7T0-8kuFVNpT-SYld80Q8DogUK05dL5ljOOC7FYyUSahsk8AcV3BTYh5/pub?gid=257425403&single=true&output=csv';
 
+        const LINK_COLUMNS = ['Draft Plans', 'Plans', 'Takeoffs', 'Pricing s', 'Proposal'];
+        const ICON_MAP = {
+            'Draft Plans': '📋',
+            'Plans': '📐',
+            'Takeoffs': '📊',
+            'Pricing s': '💰',
+            'Proposal': '📄'
+        };
+
         function showNotification(title, message) {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -370,6 +436,21 @@
             setTimeout(() => {
                 notification.remove();
             }, 5000);
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            const date = new Date(dateStr);
+            return isNaN(date.getTime()) ? null : date;
         }
 
         async function loadData() {
@@ -398,6 +479,15 @@
                     skipEmptyLines: true,
                     complete: (results) => {
                         estimatedData = results.data;
+                        // Ordenar por Submission Date (más reciente primero)
+                        estimatedData.sort((a, b) => {
+                            const dateA = parseDate(a['Submission Date']);
+                            const dateB = parseDate(b['Submission Date']);
+                            if (!dateA && !dateB) return 0;
+                            if (!dateA) return 1;
+                            if (!dateB) return -1;
+                            return dateB - dateA;
+                        });
                         renderEstimated();
                         renderCharts();
                         updateHeaderStats();
@@ -413,12 +503,27 @@
             }
         }
 
+        function createDocumentLinks(project) {
+            let linksHtml = '<div class="document-links">';
+            
+            LINK_COLUMNS.forEach(column => {
+                const url = project[column];
+                if (url && isValidUrl(url)) {
+                    const icon = ICON_MAP[column] || '🔗';
+                    linksHtml += `<a href="${url}" target="_blank" class="doc-icon" data-tooltip="${column}">${icon}</a>`;
+                }
+            });
+            
+            linksHtml += '</div>';
+            return linksHtml;
+        }
+
         function renderPending() {
             const container = document.getElementById('pendingContent');
             container.innerHTML = '';
 
             if (pendingData.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: white; padding: 50px; font-size: 1.2em;">No hay proyectos pendientes</div>';
+                container.innerHTML = '<div style="text-align: center; color: #b0b0b0; padding: 50px; font-size: 1.2em;">No hay proyectos pendientes</div>';
                 return;
             }
 
@@ -431,14 +536,20 @@
                 const titleKey = columns[0] || 'Proyecto';
                 const title = project[titleKey] || 'Sin título';
 
+                let contentHtml = '';
+                Object.entries(project).slice(1).forEach(([key, value]) => {
+                    if (value && !LINK_COLUMNS.includes(key)) {
+                        contentHtml += `<div class="card-info"><strong>${key}:</strong> ${value}</div>`;
+                    }
+                });
+
                 card.innerHTML = `
                     <div class="card-header">
                         <div class="card-title">${title}</div>
                         <div class="card-badge">Pendiente</div>
                     </div>
-                    ${Object.entries(project).slice(1).map(([key, value]) => 
-                        value ? `<div class="card-info"><strong>${key}:</strong> ${value}</div>` : ''
-                    ).join('')}
+                    ${contentHtml}
+                    ${createDocumentLinks(project)}
                     <div class="card-footer">
                         <span>⏰ Por estimar</span>
                     </div>
@@ -452,7 +563,7 @@
             container.innerHTML = '';
 
             if (estimatedData.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: white; padding: 50px; font-size: 1.2em;">No hay proyectos estimados</div>';
+                container.innerHTML = '<div style="text-align: center; color: #b0b0b0; padding: 50px; font-size: 1.2em;">No hay proyectos estimados</div>';
                 return;
             }
 
@@ -465,16 +576,25 @@
                 const titleKey = columns[0] || 'Proyecto';
                 const title = project[titleKey] || 'Sin título';
 
+                let contentHtml = '';
+                Object.entries(project).slice(1).forEach(([key, value]) => {
+                    if (value && !LINK_COLUMNS.includes(key)) {
+                        contentHtml += `<div class="card-info"><strong>${key}:</strong> ${value}</div>`;
+                    }
+                });
+
+                const submissionDate = project['Submission Date'] || '';
+
                 card.innerHTML = `
                     <div class="card-header">
                         <div class="card-title">${title}</div>
                         <div class="card-badge">Completado</div>
                     </div>
-                    ${Object.entries(project).slice(1).map(([key, value]) => 
-                        value ? `<div class="card-info"><strong>${key}:</strong> ${value}</div>` : ''
-                    ).join('')}
+                    ${contentHtml}
+                    ${createDocumentLinks(project)}
                     <div class="card-footer">
                         <span>✅ Estimado y apostado</span>
+                        ${submissionDate ? `<span>📅 ${submissionDate}</span>` : ''}
                     </div>
                 `;
                 container.appendChild(card);
@@ -491,39 +611,26 @@
         }
 
         function renderCharts() {
-            // Gráfico de estado
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pendientes', 'Estimados'],
-                    datasets: [{
-                        data: [pendingData.length, estimatedData.length],
-                        backgroundColor: ['#667eea', '#764ba2'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
+            // Gráfico por General Contractor
+            const contractorCounts = {};
+            [...pendingData, ...estimatedData].forEach(project => {
+                const contractor = project['General Contractor'] || 'Sin asignar';
+                contractorCounts[contractor] = (contractorCounts[contractor] || 0) + 1;
             });
 
-            // Gráfico de línea de tiempo (simulado)
-            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-            new Chart(timelineCtx, {
+            const contractorLabels = Object.keys(contractorCounts);
+            const contractorData = Object.values(contractorCounts);
+
+            const contractorCtx = document.getElementById('contractorChart').getContext('2d');
+            new Chart(contractorCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    labels: contractorLabels,
                     datasets: [{
-                        label: 'Proyectos Completados',
-                        data: [5, 8, 12, 15, 10, estimatedData.length],
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                        borderColor: '#667eea',
+                        label: 'Proyectos',
+                        data: contractorData,
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: '#10b981',
                         borderWidth: 2
                     }]
                 },
@@ -536,7 +643,83 @@
                     },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#b0b0b0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#b0b0b0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico por mes (Submission Date)
+            const monthCounts = {};
+            estimatedData.forEach(project => {
+                const date = parseDate(project['Submission Date']);
+                if (date) {
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+                }
+            });
+
+            const sortedMonths = Object.keys(monthCounts).sort();
+            const monthLabels = sortedMonths.map(m => {
+                const [year, month] = m.split('-');
+                const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                return `${months[parseInt(month) - 1]} ${year}`;
+            });
+            const monthData = sortedMonths.map(m => monthCounts[m]);
+
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Proyectos Completados',
+                        data: monthData,
+                        backgroundColor: 'rgba(8, 145, 178, 0.2)',
+                        borderColor: '#0891b2',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#b0b0b0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#b0b0b0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
                         }
                     }
                 }
