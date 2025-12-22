@@ -282,7 +282,7 @@
 
         .charts-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
             gap: 25px;
             margin-top: 30px;
         }
@@ -293,6 +293,23 @@
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-container.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .map-container {
+            height: 500px;
+            background: rgba(20, 20, 30, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #mapCanvas {
+            width: 100%;
+            height: 100%;
         }
 
         .chart-title {
@@ -412,6 +429,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .chart-container.full-width {
+                grid-column: 1;
+            }
+
             .header h1 {
                 font-size: 1.5em;
             }
@@ -473,12 +494,22 @@
             <div class="stats-in-analytics" id="analyticsStats"></div>
             <div class="charts-section">
                 <div class="chart-container">
-                    <div class="chart-title">Proyectos por General Contractor</div>
-                    <canvas id="contractorChart"></canvas>
+                    <div class="chart-title">Top 10 General Contractors</div>
+                    <canvas id="topContractorsChart"></canvas>
                 </div>
                 <div class="chart-container">
                     <div class="chart-title">Proyectos por Mes (Submission Date)</div>
                     <canvas id="timelineChart"></canvas>
+                </div>
+                <div class="chart-container full-width">
+                    <div class="chart-title">Proyectos de GC por Mes</div>
+                    <canvas id="contractorTimelineChart"></canvas>
+                </div>
+                <div class="chart-container full-width">
+                    <div class="chart-title">Mapa de Ubicaciones de Proyectos</div>
+                    <div class="map-container">
+                        <canvas id="mapCanvas"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -778,30 +809,36 @@
         }
 
         function renderCharts() {
-            // Gráfico por General Contractor
+            // Top 10 General Contractors
             const contractorCounts = {};
             [...pendingData, ...estimatedData].forEach(project => {
                 const contractor = project['General Contractor'] || 'Sin asignar';
                 contractorCounts[contractor] = (contractorCounts[contractor] || 0) + 1;
             });
 
-            const contractorLabels = Object.keys(contractorCounts);
-            const contractorData = Object.values(contractorCounts);
+            // Ordenar y obtener top 10
+            const sortedContractors = Object.entries(contractorCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            const topContractorLabels = sortedContractors.map(([name]) => name);
+            const topContractorData = sortedContractors.map(([, count]) => count);
 
-            const contractorCtx = document.getElementById('contractorChart').getContext('2d');
-            new Chart(contractorCtx, {
+            const topContractorsCtx = document.getElementById('topContractorsChart').getContext('2d');
+            new Chart(topContractorsCtx, {
                 type: 'bar',
                 data: {
-                    labels: contractorLabels,
+                    labels: topContractorLabels,
                     datasets: [{
                         label: 'Proyectos',
-                        data: contractorData,
+                        data: topContractorData,
                         backgroundColor: 'rgba(16, 185, 129, 0.8)',
                         borderColor: '#10b981',
                         borderWidth: 2
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     plugins: {
                         legend: {
@@ -809,16 +846,17 @@
                         }
                     },
                     scales: {
-                        y: {
+                        x: {
                             beginAtZero: true,
                             ticks: {
-                                color: '#b0b0b0'
+                                color: '#b0b0b0',
+                                stepSize: 1
                             },
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             }
                         },
-                        x: {
+                        y: {
                             ticks: {
                                 color: '#b0b0b0'
                             },
@@ -874,7 +912,8 @@
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                color: '#b0b0b0'
+                                color: '#b0b0b0',
+                                stepSize: 1
                             },
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
@@ -891,9 +930,244 @@
                     }
                 }
             });
+
+            // Gráfico de GC por mes (Top 5 contractors)
+            const contractorsByMonth = {};
+            const top5Contractors = sortedContractors.slice(0, 5).map(([name]) => name);
+            
+            estimatedData.forEach(project => {
+                const date = parseDate(project['Submission Date'] || project['Submission date']);
+                const contractor = project['General Contractor'] || 'Sin asignar';
+                
+                if (date && top5Contractors.includes(contractor)) {
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    
+                    if (!contractorsByMonth[monthKey]) {
+                        contractorsByMonth[monthKey] = {};
+                    }
+                    
+                    contractorsByMonth[monthKey][contractor] = (contractorsByMonth[monthKey][contractor] || 0) + 1;
+                }
+            });
+
+            const allMonths = Object.keys(contractorsByMonth).sort();
+            const contractorMonthLabels = allMonths.map(m => {
+                const [year, month] = m.split('-');
+                const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                return `${months[parseInt(month) - 1]} ${year}`;
+            });
+
+            const colors = [
+                { bg: 'rgba(16, 185, 129, 0.7)', border: '#10b981' },
+                { bg: 'rgba(8, 145, 178, 0.7)', border: '#0891b2' },
+                { bg: 'rgba(34, 197, 94, 0.7)', border: '#22c55e' },
+                { bg: 'rgba(14, 165, 233, 0.7)', border: '#0ea5e9' },
+                { bg: 'rgba(6, 182, 212, 0.7)', border: '#06b6d4' }
+            ];
+
+            const contractorDatasets = top5Contractors.map((contractor, index) => ({
+                label: contractor,
+                data: allMonths.map(month => contractorsByMonth[month][contractor] || 0),
+                backgroundColor: colors[index].bg,
+                borderColor: colors[index].border,
+                borderWidth: 2
+            }));
+
+            const contractorTimelineCtx = document.getElementById('contractorTimelineChart').getContext('2d');
+            new Chart(contractorTimelineCtx, {
+                type: 'bar',
+                data: {
+                    labels: contractorMonthLabels,
+                    datasets: contractorDatasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: '#b0b0b0',
+                                padding: 15
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: false,
+                            ticks: {
+                                color: '#b0b0b0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        y: {
+                            stacked: false,
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#b0b0b0',
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Mapa de ubicaciones
+            renderMap();
         }
 
-        function switchTab(tabName) {
+        function renderMap() {
+            const canvas = document.getElementById('mapCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Ajustar resolución del canvas
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            // Colores
+            const bgColor = 'rgba(20, 20, 30, 0.9)';
+            const gridColor = 'rgba(255, 255, 255, 0.1)';
+            const markerColor = '#10b981';
+            const markerGlow = 'rgba(16, 185, 129, 0.3)';
+
+            // Dibujar fondo
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Obtener ubicaciones de los proyectos
+            const locations = [];
+            [...pendingData, ...estimatedData].forEach(project => {
+                const location = project['Location'] || project['City'] || project['Address'] || '';
+                if (location) {
+                    // Simular coordenadas basadas en el hash del nombre de ubicación
+                    const hash = location.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                    const x = (hash * 1234567) % canvas.width;
+                    const y = ((hash * 7654321) % canvas.height);
+                    
+                    locations.push({
+                        name: location,
+                        project: Object.values(project)[0] || 'Proyecto',
+                        x: x,
+                        y: y
+                    });
+                }
+            });
+
+            // Si no hay ubicaciones, mostrar mensaje
+            if (locations.length === 0) {
+                ctx.fillStyle = '#b0b0b0';
+                ctx.font = '18px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('No hay ubicaciones disponibles', canvas.width / 2, canvas.height / 2);
+                ctx.font = '14px Segoe UI';
+                ctx.fillText('Asegúrate de tener columnas como "Location", "City" o "Address"', canvas.width / 2, canvas.height / 2 + 30);
+                return;
+            }
+
+            // Dibujar grid decorativo
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 1;
+            const gridSize = 50;
+            
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Dibujar conexiones entre puntos cercanos
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i < locations.length; i++) {
+                for (let j = i + 1; j < locations.length; j++) {
+                    const dx = locations[i].x - locations[j].x;
+                    const dy = locations[i].y - locations[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 200) {
+                        ctx.beginPath();
+                        ctx.moveTo(locations[i].x, locations[i].y);
+                        ctx.lineTo(locations[j].x, locations[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Dibujar marcadores
+            locations.forEach((loc, index) => {
+                // Glow effect
+                const gradient = ctx.createRadialGradient(loc.x, loc.y, 0, loc.x, loc.y, 20);
+                gradient.addColorStop(0, markerGlow);
+                gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(loc.x, loc.y, 20, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Marcador principal
+                ctx.fillStyle = markerColor;
+                ctx.beginPath();
+                ctx.arc(loc.x, loc.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Borde
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Número
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 10px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(index + 1, loc.x, loc.y);
+            });
+
+            // Leyenda
+            ctx.fillStyle = 'rgba(30, 30, 40, 0.95)';
+            ctx.fillRect(10, 10, 300, Math.min(locations.length * 25 + 40, 200));
+            
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('Ubicaciones de Proyectos', 20, 30);
+
+            ctx.fillStyle = '#b0b0b0';
+            ctx.font = '12px Segoe UI';
+            const maxLocations = Math.min(locations.length, 6);
+            
+            for (let i = 0; i < maxLocations; i++) {
+                const text = `${i + 1}. ${locations[i].name}`;
+                const truncated = text.length > 35 ? text.substring(0, 35) + '...' : text;
+                ctx.fillText(truncated, 20, 55 + i * 22);
+            }
+            
+            if (locations.length > 6) {
+                ctx.fillText(`... y ${locations.length - 6} más`, 20, 55 + 6 * 22);
+            }
+
+            // Información adicional
+            ctx.fillStyle = '#888';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'right';
+            ctx.fillText(`Total: ${locations.length} ubicaciones`, canvas.width - 20, canvas.height - 20);
+        }
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
