@@ -39,14 +39,54 @@
         .header h1 {
             color: #fff;
             font-size: 2em;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-container {
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(20, 20, 30, 0.6);
+            color: #fff;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #888;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 1.2em;
         }
 
         .header-stats {
+            display: none; /* Se mostrarán en la sección de análisis */
+        }
+
+        .stats-in-analytics {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            margin-top: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
         }
 
         .stat-badge {
@@ -332,9 +372,35 @@
             margin-left: 15px;
         }
 
+        .load-more-btn {
+            display: none;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .load-more-btn.visible {
+            display: block;
+        }
+
         .refresh-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        }
+
+        .no-results {
+            text-align: center;
+            color: #b0b0b0;
+            padding: 50px;
+            font-size: 1.2em;
         }
 
         @media (max-width: 768px) {
@@ -370,11 +436,20 @@
     <div class="container">
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                <div>
+                <div style="flex: 1; min-width: 250px;">
                     <h1>📊 Dashboard de Proyectos de Construcción</h1>
-                    <div class="header-stats" id="headerStats"></div>
                 </div>
                 <button class="refresh-button" onclick="loadData()">🔄 Actualizar</button>
+            </div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="🔍 Buscar proyectos por nombre, contractor, o cualquier campo..."
+                    oninput="handleSearch()"
+                >
+                <span class="search-icon">🔍</span>
             </div>
         </div>
 
@@ -386,13 +461,16 @@
 
         <div id="pending" class="tab-content active">
             <div id="pendingContent" class="cards-grid"></div>
+            <button class="load-more-btn" id="loadMorePending" onclick="loadMorePending()">Cargar más proyectos</button>
         </div>
 
         <div id="estimated" class="tab-content">
             <div id="estimatedContent" class="cards-grid"></div>
+            <button class="load-more-btn" id="loadMoreEstimated" onclick="loadMoreEstimated()">Cargar más proyectos</button>
         </div>
 
         <div id="analytics" class="tab-content">
+            <div class="stats-in-analytics" id="analyticsStats"></div>
             <div class="charts-section">
                 <div class="chart-container">
                     <div class="chart-title">Proyectos por General Contractor</div>
@@ -411,6 +489,12 @@
     <script>
         let pendingData = [];
         let estimatedData = [];
+        let filteredPendingData = [];
+        let filteredEstimatedData = [];
+        let pendingDisplayCount = 10;
+        let estimatedDisplayCount = 10;
+        const ITEMS_PER_PAGE = 10;
+        const MOBILE_BREAKPOINT = 768;
 
         const CSV_PENDING = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLj-BgbhSnjNKbjIpNcuva7T0-8kuFVNpT-SYld80Q8DogUK05dL5ljOOC7FYyUSahsk8AcV3BTYh5/pub?gid=2110876662&single=true&output=csv';
         const CSV_ESTIMATED = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQLj-BgbhSnjNKbjIpNcuva7T0-8kuFVNpT-SYld80Q8DogUK05dL5ljOOC7FYyUSahsk8AcV3BTYh5/pub?gid=257425403&single=true&output=csv';
@@ -490,6 +574,8 @@
                     skipEmptyLines: true,
                     complete: (results) => {
                         pendingData = results.data;
+                        filteredPendingData = [...pendingData];
+                        pendingDisplayCount = isMobile() ? ITEMS_PER_PAGE : pendingData.length;
                         renderPending();
                     }
                 });
@@ -505,21 +591,14 @@
                             const dateA = parseDate(a['Submission Date'] || a['Submission date']);
                             const dateB = parseDate(b['Submission Date'] || b['Submission date']);
                             
-                            // Si ambas fechas no existen, mantener orden original
                             if (!dateA && !dateB) return 0;
-                            // Si solo A no tiene fecha, va al final
                             if (!dateA) return 1;
-                            // Si solo B no tiene fecha, va al final
                             if (!dateB) return -1;
-                            // Ordenar de más reciente a más antiguo
                             return dateB.getTime() - dateA.getTime();
                         });
                         
-                        console.log('Datos ordenados:', estimatedData.map(p => ({
-                            proyecto: Object.values(p)[0],
-                            fecha: p['Submission Date'] || p['Submission date']
-                        })));
-                        
+                        filteredEstimatedData = [...estimatedData];
+                        estimatedDisplayCount = isMobile() ? ITEMS_PER_PAGE : estimatedData.length;
                         renderEstimated();
                         renderCharts();
                         updateHeaderStats();
@@ -550,19 +629,59 @@
             return linksHtml;
         }
 
+        function isMobile() {
+            return window.innerWidth <= MOBILE_BREAKPOINT;
+        }
+
+        function handleSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredPendingData = pendingData.filter(project => {
+                return Object.values(project).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            filteredEstimatedData = estimatedData.filter(project => {
+                return Object.values(project).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            pendingDisplayCount = isMobile() ? ITEMS_PER_PAGE : filteredPendingData.length;
+            estimatedDisplayCount = isMobile() ? ITEMS_PER_PAGE : filteredEstimatedData.length;
+            
+            renderPending();
+            renderEstimated();
+        }
+
+        function loadMorePending() {
+            pendingDisplayCount += ITEMS_PER_PAGE;
+            renderPending();
+        }
+
+        function loadMoreEstimated() {
+            estimatedDisplayCount += ITEMS_PER_PAGE;
+            renderEstimated();
+        }
+
         function renderPending() {
             const container = document.getElementById('pendingContent');
+            const loadMoreBtn = document.getElementById('loadMorePending');
             container.innerHTML = '';
 
-            if (pendingData.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #b0b0b0; padding: 50px; font-size: 1.2em;">No hay proyectos pendientes</div>';
+            if (filteredPendingData.length === 0) {
+                container.innerHTML = '<div class="no-results">No se encontraron proyectos pendientes</div>';
+                loadMoreBtn.classList.remove('visible');
                 return;
             }
 
-            pendingData.forEach((project, index) => {
+            const itemsToShow = filteredPendingData.slice(0, pendingDisplayCount);
+            
+            itemsToShow.forEach((project, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animationDelay = `${index * 0.05}s`;
                 
                 const columns = Object.keys(project);
                 const titleKey = columns[0] || 'Proyecto';
@@ -588,21 +707,31 @@
                 `;
                 container.appendChild(card);
             });
+
+            if (isMobile() && pendingDisplayCount < filteredPendingData.length) {
+                loadMoreBtn.classList.add('visible');
+            } else {
+                loadMoreBtn.classList.remove('visible');
+            }
         }
 
         function renderEstimated() {
             const container = document.getElementById('estimatedContent');
+            const loadMoreBtn = document.getElementById('loadMoreEstimated');
             container.innerHTML = '';
 
-            if (estimatedData.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #b0b0b0; padding: 50px; font-size: 1.2em;">No hay proyectos estimados</div>';
+            if (filteredEstimatedData.length === 0) {
+                container.innerHTML = '<div class="no-results">No se encontraron proyectos estimados</div>';
+                loadMoreBtn.classList.remove('visible');
                 return;
             }
 
-            estimatedData.forEach((project, index) => {
+            const itemsToShow = filteredEstimatedData.slice(0, estimatedDisplayCount);
+
+            itemsToShow.forEach((project, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animationDelay = `${index * 0.05}s`;
                 
                 const columns = Object.keys(project);
                 const titleKey = columns[0] || 'Proyecto';
@@ -631,10 +760,16 @@
                 `;
                 container.appendChild(card);
             });
+
+            if (isMobile() && estimatedDisplayCount < filteredEstimatedData.length) {
+                loadMoreBtn.classList.add('visible');
+            } else {
+                loadMoreBtn.classList.remove('visible');
+            }
         }
 
         function updateHeaderStats() {
-            const statsContainer = document.getElementById('headerStats');
+            const statsContainer = document.getElementById('analyticsStats');
             statsContainer.innerHTML = `
                 <div class="stat-badge">⏳ Pendientes: ${pendingData.length}</div>
                 <div class="stat-badge">✅ Completados: ${estimatedData.length}</div>
@@ -764,6 +899,15 @@
             
             event.target.classList.add('active');
             document.getElementById(tabName).classList.add('active');
+            
+            // Resetear contadores al cambiar de pestaña
+            if (tabName === 'pending') {
+                pendingDisplayCount = isMobile() ? ITEMS_PER_PAGE : filteredPendingData.length;
+                renderPending();
+            } else if (tabName === 'estimated') {
+                estimatedDisplayCount = isMobile() ? ITEMS_PER_PAGE : filteredEstimatedData.length;
+                renderEstimated();
+            }
         }
 
         // Cargar datos al inicio
