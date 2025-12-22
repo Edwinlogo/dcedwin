@@ -450,8 +450,27 @@
 
         function parseDate(dateStr) {
             if (!dateStr) return null;
-            const date = new Date(dateStr);
-            return isNaN(date.getTime()) ? null : date;
+            
+            // Intentar múltiples formatos de fecha
+            let date;
+            
+            // Formato ISO: 2024-12-15
+            date = new Date(dateStr);
+            if (!isNaN(date.getTime())) return date;
+            
+            // Formato MM/DD/YYYY o DD/MM/YYYY
+            const parts = dateStr.split(/[\/\-]/);
+            if (parts.length === 3) {
+                // Intentar MM/DD/YYYY
+                date = new Date(parts[2], parts[0] - 1, parts[1]);
+                if (!isNaN(date.getTime())) return date;
+                
+                // Intentar DD/MM/YYYY
+                date = new Date(parts[2], parts[1] - 1, parts[0]);
+                if (!isNaN(date.getTime())) return date;
+            }
+            
+            return null;
         }
 
         async function loadData() {
@@ -480,15 +499,27 @@
                     skipEmptyLines: true,
                     complete: (results) => {
                         estimatedData = results.data;
+                        
                         // Ordenar por Submission Date (más reciente primero)
                         estimatedData.sort((a, b) => {
-                            const dateA = parseDate(a['Submission Date']);
-                            const dateB = parseDate(b['Submission Date']);
+                            const dateA = parseDate(a['Submission Date'] || a['Submission date']);
+                            const dateB = parseDate(b['Submission Date'] || b['Submission date']);
+                            
+                            // Si ambas fechas no existen, mantener orden original
                             if (!dateA && !dateB) return 0;
+                            // Si solo A no tiene fecha, va al final
                             if (!dateA) return 1;
+                            // Si solo B no tiene fecha, va al final
                             if (!dateB) return -1;
-                            return dateB - dateA;
+                            // Ordenar de más reciente a más antiguo
+                            return dateB.getTime() - dateA.getTime();
                         });
+                        
+                        console.log('Datos ordenados:', estimatedData.map(p => ({
+                            proyecto: Object.values(p)[0],
+                            fecha: p['Submission Date'] || p['Submission date']
+                        })));
+                        
                         renderEstimated();
                         renderCharts();
                         updateHeaderStats();
@@ -584,7 +615,7 @@
                     }
                 });
 
-                const submissionDate = project['Submission Date'] || '';
+                const submissionDate = project['Submission Date'] || project['Submission date'] || '';
 
                 card.innerHTML = `
                     <div class="card-header">
@@ -667,7 +698,7 @@
             // Gráfico por mes (Submission Date)
             const monthCounts = {};
             estimatedData.forEach(project => {
-                const date = parseDate(project['Submission Date']);
+                const date = parseDate(project['Submission Date'] || project['Submission date']);
                 if (date) {
                     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                     monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
