@@ -389,6 +389,11 @@
             margin-left: 15px;
         }
 
+        .refresh-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        }
+
         .load-more-btn {
             display: none;
             margin: 30px auto;
@@ -408,7 +413,7 @@
             display: block;
         }
 
-        .refresh-button:hover {
+        .load-more-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
         }
@@ -844,7 +849,7 @@
                         legend: {
                             display: false
                         }
-                    },
+                        },
                     scales: {
                         x: {
                             beginAtZero: true,
@@ -1168,6 +1173,8 @@
             ctx.textAlign = 'right';
             ctx.fillText(`Total: ${locations.length} ubicaciones`, canvas.width - 20, canvas.height - 20);
         }
+
+        function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
