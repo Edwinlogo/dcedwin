@@ -1,0 +1,23 @@
+{
+ "status": "allow",
+ "expire_date": "2026-12-31"
+}
+
+
+
+{
+ "status": "allow",
+ "expire_date": "never"
+}
+
+
+
+{
+ "status": "blocked"
+}
+
+
+
+{
+ "status": "delete"
+}
