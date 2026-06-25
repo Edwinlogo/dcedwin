@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planes Digitales</title>
+
+<style>
+:root{
+    --primary:#0f172a;
+    --secondary:#0ea5e9;
+    --accent:#06b6d4;
+    --success:#10b981;
+    --light:#f8fafc;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f8fafc;
+    padding:60px 20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.titulo{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.titulo h1{
+    font-size:2.5rem;
+    color:#0f172a;
+    margin-bottom:10px;
+}
+
+.titulo p{
+    color:#64748b;
+    font-size:1.1rem;
+}
+
+.billing-toggle{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:50px;
+}
+
+.billing-toggle button{
+    border:none;
+    padding:12px 24px;
+    border-radius:50px;
+    cursor:pointer;
+    font-weight:600;
+    background:#e2e8f0;
+    transition:.3s;
+}
+
+.billing-toggle button.active{
+    background:var(--secondary);
+    color:white;
+}
+
+.planes{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+}
+
+.plan{
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+    transition:.35s;
+    position:relative;
+}
+
+.planes:hover .plan{
+    opacity:.7;
+    transform:scale(.97);
+}
+
+.planes .plan:hover{
+    opacity:1;
+    transform:scale(1.05);
+    box-shadow:0 25px 60px rgba(0,0,0,.18);
+    z-index:10;
+}
+
+.header{
+    color:white;
+    text-align:center;
+    padding:35px 25px;
+}
+
+.pro{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+}
+
+.emp{
+    background:linear-gradient(135deg,#0ea5e9,#06b6d4);
+}
+
+.corp{
+    background:linear-gradient(135deg,#1e293b,#0f172a);
+}
+
+.nombre{
+    font-size:1.8rem;
+    font-weight:700;
+}
+
+.precio{
+    margin-top:15px;
+    font-size:38px;
+    font-weight:700;
+    line-height:1.1;
+}
+
+.precio span{
+    font-size:16px;
+    font-weight:500;
+}
+
+.badge{
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:#10b981;
+    color:white;
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.contenido{
+    padding:30px;
+}
+
+.contenido ul{
+    list-style:none;
+}
+
+.contenido li{
+    padding:12px 0;
+    border-bottom:1px solid #edf2f7;
+    color:#334155;
+}
+
+.contenido li:last-child{
+    border:none;
+}
+
+.boton{
+    display:block;
+    text-align:center;
+    text-decoration:none;
+    color:white;
+    padding:14px;
+    border-radius:12px;
+    margin-top:25px;
+    opacity:0;
+    transform:translateY(15px);
+    transition:.3s;
+    font-weight:600;
+}
+
+.plan:hover .boton{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.btn-pro{
+    background:#1e40af;
+}
+
+.btn-emp{
+    background:#0891b2;
+}
+
+.btn-corp{
+    background:#0f172a;
+}
+
+.boton:hover{
+    filter:brightness(1.08);
+}
+
+@media(max-width:768px){
+
+    .titulo h1{
+        font-size:2rem;
+    }
+
+    .precio{
+        font-size:32px;
+    }
+
+    .planes:hover .plan{
+        opacity:1;
+        transform:none;
+    }
+
+    .planes .plan:hover{
+        transform:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="titulo">
+        <h1>Planes para tu Presencia Digital</h1>
+        <p>Impulsa tu negocio con una solución adaptada a tus necesidades.</p>
+    </div>
+
+    <div class="billing-toggle">
+        <button class="active" onclick="changeBilling('monthly', this)">
+            Mensual
+        </button>
+
+        <button onclick="changeBilling('yearly', this)">
+            Anual
+        </button>
+    </div>
+
+    <div class="planes">
+
+        <!-- PLAN PROFESIONAL -->
+        <div class="plan">
+
+            <div class="header pro">
+                <div class="nombre">PLAN PROFESIONAL</div>
+
+                <div class="precio"
+                     data-monthly="55"
+                     data-yearly="500">
+                    $55<span> USD</span>
+                </div>
+            </div>
+
+            <div class="contenido">
+
+                <ul>
+                    <li>✅ Landing Page Informativa</li>
+                    <li>✅ 1 Correo Profesional</li>
+                    <li>✅ Dominio + Hosting</li>
+                    <li>✅ Gestión y Configuración</li>
+                    <li>✅ 1 Soporte Mensual</li>
+                </ul>
+
+                <a
+                href="https://wa.me/573144290830?text=Hola,%20quisiera%20contratar%20el%20Plan%20Profesional"
+                target="_blank"
+                class="boton btn-pro">
+                    Contratar Plan
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- PLAN EMPRESARIAL -->
+        <div class="plan">
+
+            <div class="badge">
+                Más Popular
+            </div>
+
+            <div class="header emp">
+
+                <div class="nombre">
+                    PLAN EMPRESARIAL
+                </div>
+
+                <div class="precio"
+                     data-monthly="80"
+                     data-yearly="750">
+                    $80<span> USD</span>
+                </div>
+
+            </div>
+
+            <div class="contenido">
+
+                <ul>
+                    <li>✅ Sitio Web Profesional</li>
+                    <li>✅ 5 Correos Profesionales</li>
+                    <li>✅ Dominio + Hosting</li>
+                    <li>✅ Catálogo Digital</li>
+                    <li>✅ Chatbot WhatsApp</li>
+                    <li>✅ 3 Soportes Mensuales</li>
+                </ul>
+
+                <a
+                href="https://wa.me/573144290830?text=Hola,%20quisiera%20contratar%20el%20Plan%20Empresarial"
+                target="_blank"
+                class="boton btn-emp">
+                    Contratar Plan
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- PLAN CORPORACIÓN -->
+        <div class="plan">
+
+            <div class="header corp">
+
+                <div class="nombre">
+                    PLAN CORPORACIÓN
+                </div>
+
+                <div class="precio">
+                    Personalizado
+                </div>
+
+            </div>
+
+            <div class="contenido">
+
+                <ul>
+                    <li>✅ Sitio Web a Medida</li>
+                    <li>✅ Correos Profesionales Ilimitados</li>
+                    <li>✅ Dominio + Hosting</li>
+                    <li>✅ Agente IA Conversacional</li>
+                    <li>✅ Soporte Premium</li>
+                </ul>
+
+                <a
+                href="https://wa.me/573144290830?text=Hola,%20quisiera%20contratar%20el%20Plan%20Corporación"
+                target="_blank"
+                class="boton btn-corp">
+                    Contáctanos
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function changeBilling(type, button){
+
+    document
+    .querySelectorAll('.billing-toggle button')
+    .forEach(btn => btn.classList.remove('active'));
+
+    button.classList.add('active');
+
+    document
+    .querySelectorAll('.precio[data-monthly]')
+    .forEach(price => {
+
+        let value;
+
+        if(type === 'monthly'){
+            value = price.dataset.monthly;
+        }else{
+            value = price.dataset.yearly;
+        }
+
+        price.innerHTML =
+        '$' + value +
+        '<span> USD</span>';
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
